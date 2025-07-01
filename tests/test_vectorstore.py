@@ -22,8 +22,8 @@ def test_vectorstore_basic():
   print("Search: ", results)
   print("All: ", store.list_all())
 
-  #store.update(str(uuids[0][0]), "We switched vector store to Chroma", "user")
-  #print("Updated: ", store.list_all())
+  store.update(str(uuids[-1]), "We switched vector store to Chroma", "user")
+  print("Updated: ", store.list_all())
   
 
 
