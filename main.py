@@ -1,8 +1,10 @@
 import os
 import openai
 from dotenv import load_dotenv
+from assistant.vector_store import VectorStore
 
 load_dotenv()
+store = VectorStore()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 """ response = openai.chat.completions.create(
@@ -29,6 +31,7 @@ while True:
     break
   
   messages.append({"role": "user", "content": user_input})
+  store.add_message(user_input, "user") # store embedding
 
   try:
     response = openai.chat.completions.create(
@@ -39,5 +42,6 @@ while True:
     reply = response.choices[0].message.content
     print(f'Assistant: {reply}\n')
     messages.append({"role": "assistant", "content": reply})
+    store.add_message(reply, "assistant") # store embedding
   except Exception as e:
     print(f"[Error] {e}")
