@@ -22,5 +22,8 @@ jobs:
       - name: Install dependencies from pyproject.toml
         run: uv sync
 
+      - name: Set OPENAI_API_KEY from secret
+        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+
       - name: Run tests
         run: uv run pytest
