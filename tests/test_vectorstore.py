@@ -1,8 +1,13 @@
 from assistant.vector_store import VectorStore
 import sys
 from uuid import uuid4
-import asyncio
+import os
+import pytest
 
+openai_key = os.getenv("OPENAI_API_KEY")
+
+
+@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_vectorstore_basic():
   store = VectorStore()
 
@@ -19,7 +24,9 @@ def test_vectorstore_basic():
 
   store.update(str(uuids[-1]), "We switched vector store to Chroma", "user")
   print("Updated: ", store.list_all())
-  
+
+
+@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_vectorstore_single():
   store = VectorStore()
   
