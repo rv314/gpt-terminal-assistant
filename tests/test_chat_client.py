@@ -1,7 +1,13 @@
 # tests/test_chat_client.py
 
 from assistant.chat_client import chat
+import pytest
+import os
 
+openai_key = os.getenv("OPENAI_API_KEY")
+
+
+@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_chat():
   messages = [
     {"role": "system", "content": "You are helpful assistant."},
