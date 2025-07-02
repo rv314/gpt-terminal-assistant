@@ -2,6 +2,7 @@ import os
 import openai
 from dotenv import load_dotenv
 from assistant.vector_store import VectorStore
+from uuid import uuid4
 
 load_dotenv()
 store = VectorStore()
