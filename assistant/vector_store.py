@@ -1,5 +1,8 @@
+# TODO: uuid not working as an argument, might as well leave it 
+#       to the library to perform the function of adding uuid
 import openai
 import os
+from datetime import datetime
 from langchain_chroma.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
@@ -37,14 +40,16 @@ class VectorStore:
     return response.data[0].embedding
   
 
-  def add_message(self, text: str, role: str, uuids: str):
+  def add_message(self, text: str, role: str):
     # embeddings = self.embed(text=text)
-    doc = Document(page_content=f"{role}: {text}", metadata={"role": role})
-    self.store.add_documents(documents=[doc], ids=uuids)
+    doc = Document(page_content=f"{role}: {text}", 
+                   metadata={"role": role,
+                             "created": str(datetime.now())})
+    self.store.add_documents(documents=[doc])
     #self.store.persist()
 
 
-  def add_documents(self, texts: list, uuids: str, role: str):
+  def add_documents(self, texts: list, role: str, uuids: str = None):
     docs = [Document(page_content=f"{text}", metadata={"role": role}) for text in texts]
     self.store.add_documents(documents=docs, ids=uuids)
     
@@ -57,7 +62,7 @@ class VectorStore:
 
   def list_all(self, k: int = 1000):
     docs = self.store.similarity_search("", k=k)
-    return [[doc.page_content, doc.id] for doc in docs]
+    return [[doc.page_content, doc.id, doc.metadata] for doc in docs]
   
 
   def get_uuid(self, k: int = 1000):
@@ -66,6 +71,8 @@ class VectorStore:
   
 
   def update(self, uuid: str, input_text: str, role: str):
-    doc = Document(page_content=f"{role}: {input_text}", metadata={"role": role})
+    doc = Document(page_content=f"{role}: {input_text}", 
+                   metadata={"role": role,
+                             "updated": str(datetime.now())})
     self.store.update_document(document_id=uuid, document=doc)
     
