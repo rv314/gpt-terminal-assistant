@@ -7,7 +7,14 @@ import pytest
 openai_key = os.getenv("OPENAI_API_KEY")
 
 
-@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
+def test_add_and_retrieve():
+  vs = VectorStore("test_memory", persist_dir="vectors/test_chroma")
+  vs.add_message("user", "Artificial Intelligence is changing the world.")
+  results = vs.get_top_k("What is changing the world?")
+  assert results and "intelligence" in results[0].lower()
+  print("✅ test_add_and_retrieve passed.")
+
+""" @pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_vectorstore_basic():
   store = VectorStore()
 
@@ -41,4 +48,4 @@ def test_vectorstore_single():
 if __name__ == "__main__":
   print(f"Executing from {sys.executable}")
   test_vectorstore_basic()
-  #test_vectorstore_single()
+  #test_vectorstore_single() """
