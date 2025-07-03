@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "chromadb>=1.0.13",
-    "langchain-chroma>=0.2.4",
     "langchain-community>=0.3.26",
     "langchain-core>=0.3.67",
     "langchain-openai>=0.3.27",
@@ -14,6 +13,6 @@ dependencies = [
     "pytest>=8.4.1",
     "python-dotenv>=1.1.1",
     "tiktoken>=0.9.0",
+    "torch>=2.2.2",
     "uuid>=1.30",
-    "vlite>=0.2.7",
 ]
