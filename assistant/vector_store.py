@@ -1,53 +1,44 @@
 # TODO: uuid not working as an argument, might as well leave it 
 #       to the library to perform the function of adding uuid
-import openai
-import os
 from datetime import datetime
-from langchain_chroma.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
+import chromadb
+from chromadb.config import Settings
+import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 class VectorStore:
   
-  def __init__(self, collection_name="chat_vectors"):
-    base_path = os.path.dirname(os.path.dirname(__file__)) # go to project root
-    self.vector_dir = os.path.join(base_path, "vectors")
-    os.makedirs(self.vector_dir, exist_ok=True)
+  def __init__(self, collection_name="chat_memory", persist_dir="vectors/chroma"):
+    # verify persistent folder exists
+    persist_path = Path(persist_dir)
+    persist_path.mkdir(parents=True, exist_ok=True)
 
-    collection_path = os.path.join(self.vector_dir, collection_name)
-    self.embedding_fn = OpenAIEmbeddings()
-
-    self.store = Chroma(
-      embedding_function=self.embedding_fn,
-      collection_name=collection_name,
-      persist_directory=self.vector_dir
+    # Initialize a persistent client
+    self.client = chromadb.PersistentClient(path = str(persist_path))
+    self.collection = self.client.get_or_create_collection(collection_name)
+    self.embedder = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
+    
+  
+  def add_message(self, role: str, content: str):
+    """Embed and store a message in the Chroma vector DB."""
+    embeddings = self.embedder.embed_query(content)
+    self.collection.add(
+      documents=[content],
+      embeddings=[embeddings],
+      ids=[f"{role}_{hash(content)}"]
     )
 
-    #self.store.persist()
-  
-  
-  def embed(self, text: str):
-    response = openai.embeddings.create(
-      input=[text],
-      model="text-embedding-3-small",
-      
+
+  def get_top_k(self, query, k=3):
+    """Retrieve top-k similar messages from vector DB based on query."""
+    embeddings = self.embedder.embed_query(query)
+    results = self.collection.query(
+      query_embeddings=[embeddings],
+      n_results=k
     )
-    return response.data[0].embedding
-  
-
-  def add_message(self, text: str, role: str):
-    # embeddings = self.embed(text=text)
-    doc = Document(page_content=f"{role}: {text}", 
-                   metadata={"role": role,
-                             "created": str(datetime.now())})
-    self.store.add_documents(documents=[doc])
-    #self.store.persist()
-
+    return results["documents"][0] if results["documents"] else []
 
   def add_documents(self, texts: list, role: str, uuids: str = None):
     docs = [Document(page_content=f"{text}", metadata={"role": role}) for text in texts]
