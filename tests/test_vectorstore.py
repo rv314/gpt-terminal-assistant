@@ -7,6 +7,7 @@ import pytest
 openai_key = os.getenv("OPENAI_API_KEY")
 
 
+@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_add_and_retrieve():
   vs = VectorStore("test_memory", persist_dir="vectors/test_chroma")
   vs.add_message("user", "Artificial Intelligence is changing the world.")
