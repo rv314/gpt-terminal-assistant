@@ -94,3 +94,14 @@ logs/eval_log.jsonl
 - [ ] Add journaling / reminder commands
 - [ ] GUI layer using Streamlit/Gradio
 - [ ] Plug into agent framework (e.g., LangGraph)
+
+## 🤝 Contributing
+Feel free to fork or create issues! This project is a stepping stone toward building your own agentic apps and LLM tools.
+
+## 📄 License
+MIT
+
+## 🙋‍♂️ Maintainer
+This project is currently maintained by the following individuals:
+
+*   **RP** - GitHub: [@rv314](https://github.com/rv314)
