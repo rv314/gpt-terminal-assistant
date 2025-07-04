@@ -87,10 +87,10 @@ logs/eval_log.jsonl
 
 ## 🧭 Roadmap
 
-- [✅] Terminal-based assistant with memory
-- [✅] Modular ChatEngine class
-- [✅] Token limiter + debug tools
-- [✅] CI/CD pipeline with uv
+- [x] Terminal-based assistant with memory
+- [x] Modular ChatEngine class
+- [x] Token limiter + debug tools
+- [x] CI/CD pipeline with uv
 - [ ] Add journaling / reminder commands
 - [ ] GUI layer using Streamlit/Gradio
 - [ ] Plug into agent framework (e.g., LangGraph)
