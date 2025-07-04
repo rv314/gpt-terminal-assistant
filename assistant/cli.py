@@ -2,7 +2,7 @@
 
 from assistant.chat_client import chat
 from assistant.vector_store import VectorStore
-from assistant.evaluation_logger import log_eval
+from utils.evaluation_logger import log_eval
 
 vector_store = VectorStore()
 

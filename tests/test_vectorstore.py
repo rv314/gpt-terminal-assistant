@@ -1,5 +1,4 @@
 from assistant.vector_store import VectorStore
-import sys
 from uuid import uuid4
 import os
 import pytest
