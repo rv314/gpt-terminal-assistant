@@ -19,7 +19,10 @@ def trim_messages(messages, model: str, max_tokens=3000):
 
   # Reverse iterate to keep latest messages
   for msg in reversed(messages):
-    msg_tokens = len(encoding.encode(msg["role"] + msg["content"]))
+    role = msg.get("role", "")
+    content = msg.get("content", "")
+    msg_tokens = len(encoding.encode(role + content))
+    
     if total_tokens + msg_tokens <= max_tokens:
       trimmed.insert(0, msg)
       total_tokens += msg_tokens
