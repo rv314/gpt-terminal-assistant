@@ -66,3 +66,31 @@ uv run python assistant/cli.py
 ```bash
 python -m assistant.cli
 ```
+
+- Type your queries in terminal.
+- Type exit to quit.
+
+## 🧠 Vector Store
+
+Messages are stored and retrieved using ChromaDB. Retrieval is based on semantic similarity using OpenAI embeddings.
+
+You can view logs and evals inside:
+```bash
+logs/eval_log.jsonl
+```
+
+## 🧰 Developer Notes
+
+- Code is modular and testable.
+- Debug logs can be toggled via `debug_log()` in `utils/debug.py` (Work in progress).
+- Token limit enforced using `trim_messages()` in `utils/token_utils.py`.
+
+## 🧭 Roadmap
+
+- [x] Terminal-based assistant with memory
+- [x] Modular ChatEngine class
+- [x] Token limiter + debug tools
+- [x] CI/CD pipeline with uv
+- [ ] Add journaling / reminder commands
+- [ ] GUI layer using Streamlit/Gradio
+- [ ] Plug into agent framework (e.g., LangGraph)
