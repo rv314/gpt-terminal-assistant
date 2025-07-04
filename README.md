@@ -45,7 +45,24 @@ uv sync
 ```
 
 3. **Create `.env` file**
-`
+
+```env
 # .env
 OPENAI_API_KEY=your-openai-key
-`
+```
+
+## 🧪 Run Tests
+```bash
+uv run pytest
+```
+✅ Includes vector DB and token limiter tests.
+
+## 💬 Usage
+### 🖥️ Start the assistant
+```bash
+uv run python assistant/cli.py
+```
+#### OR
+```bash
+python -m assistant.cli
+```
