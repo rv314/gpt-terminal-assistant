@@ -13,13 +13,20 @@ vector_store = VectorStore()
 
 def chat(messages, model=model, max_tokens=3000):
   user_input = messages[-1]["content"]
-  history = vector_store.get_top_k(user_input, k=3)
+  context_results = vector_store.get_top_k(user_input, k=3)
 
-  full_prompt = [{"role": "system", "content": "You are a helpful terminal assistant. You provide short, brief and crisp responses."}]
+  # Build a single context string for system prompt
+  context_text = "\n---\n".join([doc for doc, _ in context_results]) if context_results else ""
 
-  for msg in history:
-    full_prompt.append({"role": "user", "content": msg})
-  full_prompt.extend(messages[-2:])
+
+  system_prompt = [
+    {"role": "system",
+     "content": "You are a helpful terminal assistant. You provide short, brief and crisp responses."
+     + (f"\nUse the following previous Q&A for context:\n{context_text}" if context_text else "")
+     }]
+
+  # Build full prompt
+  full_prompt = system_prompt + messages[-2:]
   full_prompt = trim_messages(full_prompt, model=model, max_tokens=max_tokens)
 
   resp = openai.chat.completions.create(
@@ -29,7 +36,6 @@ def chat(messages, model=model, max_tokens=3000):
 
   reply = resp.choices[0].message.content
 
-  vector_store.add_message("user", user_input)
-  vector_store.add_message("assistant", reply)
+  vector_store.add_message(user_input, reply)
 
   return reply
