@@ -21,26 +21,46 @@ class VectorStore:
     self.embedder = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
     
   
-  def add_message(self, role: str, content: str):
-    """Embed and store a message in the Chroma vector DB."""
+  def add_message(self, question: str, answer: str):
+    """Embed and store Q&A pair into Chroma vector DB."""
+    content = f"Q: {question.strip()}\nA: {answer.strip()}"
     embeddings = self.embedder.embed_query(content)
     self.collection.add(
       documents=[content],
       embeddings=[embeddings],
-      ids=[f"{role}_{hash(content)}"]
+      ids=[f"entry_{hash(content)}"]
     )
+    print(f"🧠 Added to vector store:\n{content[:100]}...\n")
 
 
-  def get_top_k(self, query, k=3):
-    """Retrieve top-k similar messages from vector DB based on query."""
+  def get_top_k(self, query: str, k: int = 3, similarity_threshold: float = 0.5) -> list[tuple[str, float]]:
+    """Retrieve top-k similar Q&A messages from vector DB."""
     embeddings = self.embedder.embed_query(query)
+
     results = self.collection.query(
       query_embeddings=[embeddings],
-      n_results=k
+      n_results=k,
+      include=["documents", "distances"]
     )
-    return results["documents"][0] if results["documents"] else []
+    
+    documents = results.get("documents", [[]])[0]
+    distances = results.get("distances", [[]])[0]
 
-  def add_documents(self, texts: list, role: str, uuids: str = None):
+    # Filter based on distances threshold (lower = more similar)
+    filtered = [
+      (doc, dist)
+      for doc, dist in zip(documents, distances)
+      if dist <= similarity_threshold
+    ]
+
+    print("→ Query:", query)
+    print("→ Raw embedding len:", len(embeddings))
+    print("→ Collection count:", self.collection.count())
+    print("→ Query results:", results)
+
+    return filtered
+
+"""   def add_documents(self, texts: list, role: str, uuids: str = None):
     docs = [Document(page_content=f"{text}", metadata={"role": role}) for text in texts]
     self.store.add_documents(documents=docs, ids=uuids)
     
@@ -65,5 +85,5 @@ class VectorStore:
     doc = Document(page_content=f"{role}: {input_text}", 
                    metadata={"role": role,
                              "updated": str(datetime.now())})
-    self.store.update_document(document_id=uuid, document=doc)
+    self.store.update_document(document_id=uuid, document=doc) """
     
