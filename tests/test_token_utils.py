@@ -1,5 +1,11 @@
 from assistant.token_utils import count_tokens, trim_messages
+import pytest
+import os
 
+openai_key = os.getenv("OPENAI_API_KEY")
+
+
+@pytest.mark.skipif(not openai_key, reason="OpenAI key not found!!")
 def test_count_tokens():
     messages = [
         {"role": "user", "content": "hello " * 3500}  # ~3000+ tokens
