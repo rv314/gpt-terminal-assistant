@@ -4,85 +4,53 @@ A terminal-based AI assistant powered by OpenAI's GPT models. It supports contex
 
 ---
 
-## 🚀 Features
+## 🛠️ Installation
 
-- Chat with GPT-3.5/4 using terminal
-- Context-aware replies using vector database
-- Token limit enforcement for model safety
-- Modular, testable architecture (`ChatEngine`, `VectorStore`)
-- CLI-first, with hooks for GUI or API expansion
-- Evaluation logs and debug tools
-- GitHub Actions CI setup with `uv` package manager
+➡️ For full setup and advanced usage, see the [📄 Full Installation Guide.]()
 
----
+## 📌 Features
 
-## 🛠️ Tech Stack
+### 🧠 Context-Aware LLM Assistant (RAG-Enabled)
 
-| Component        | Tool/Library          |
-|------------------|-----------------------|
-| LLM API          | OpenAI GPT            |
-| Vector DB        | ChromaDB              |
-| Embedding        | OpenAI Embeddings     |
-| Tokenization     | `tiktoken`            |
-| Packaging/Env    | `uv`, `pyproject.toml`|
-| Testing          | `pytest`              |
-| CI/CD            | GitHub Actions        |
-| CLI Dev          | Python (>=3.12)       |
+This assistant implements a **Retrieval-Augmented Generation (RAG)** pipeline using a local vector database (ChromaDB):
+
+- 🔍 **Embeddings & Semantic Search**: Each message is embedded using `OpenAIEmbeddings`, enabling retrieval of semantically similar past messages.
+- 💬 **Context Injection**: Retrieved context is injected into the system prompt, allowing the assistant to remember and reference past interactions.
+- 🧾 **Eval-Ready Logging**: Context, distances, and scores are logged to evaluate RAG effectiveness.
+
+> ✅ Vector store is modular — easily swap to **Pinecone**, **Qdrant**, or **Weaviate** for production-scale setups.
 
 ---
 
-## 📦 Installation
+### 🧪 Test-Driven & CI-Ready
 
-1. **Clone the repo**
-```bash
-git clone https://github.com/rv314/gpt-terminal-assistant.git
-cd gpt-terminal-assistant
-```
+- ✅ Coverage for critical components using **`pytest`**
+- 🔁 Automated testing via **GitHub Actions**
+- 🔒 Uses **GitHub Secrets** or local skipping for `OPENAI_API_KEY`
 
-2. **Create a virtual environment (uv-based)**
-```bash
-uv venv .venv
-```
+---
 
-3. **Activate virtual environment**
-```bash
-# Linux/Mac
-source .venv/bin/activate
+### 🧰 Modular, Extensible Codebase
 
-# Windows (Powershell)
-.venv\Scripts\Activate.ps1
-```
+- 🧱 Organized by purpose: `chat_client.py`, `vector_store.py`, `token_utils.py`, `evaluation_logger.py`, etc.
+- 🧪 Optional debug logger and evaluation scoring logic for observability
+- 🧠 Smart token-aware message trimming with `tiktoken`
 
-4. **Install dependencies with uv from pyproject.toml**
-```bash
-uv sync
-```
+---
 
-5. **Create `.env` file**
+## 🧰 Tools & Tech Stack
 
-```env
-# .env
-OPENAI_API_KEY=your-openai-key
-```
+| Category        | Tools / Libraries                               |
+|-----------------|-------------------------------------------------|
+| Language        | Python 3.12                                     |
+| Package Manager | [uv](https://github.com/astral-sh/uv) (PEP 582) |
+| Embeddings      | OpenAI / SentenceTransformers (optional)        |
+| Vector DB       | ChromaDB (swap-ready for Qdrant or Pinecone)    |
+| Prompting       | OpenAI Chat API + RAG                           |
+| CLI             | Terminal-based interface (`input()`)            |
+| CI/CD           | GitHub Actions + `uv` + `pytest`                |
 
-## 🧪 Run Tests
-```bash
-uv run pytest
-```
-✅ Includes vector DB and token limiter tests.
-
-## 💬 Usage
-### 🖥️ Start the assistant
-```bash
-uv run python assistant/cli.py
-```
-#### OR
-```bash
-python -m assistant.cli
-```
-
-- Type your queries in terminal.
-- Type exit to quit.
+---
 
 ## 🧠 Vector Store
 
@@ -92,12 +60,15 @@ You can view logs and evals inside:
 ```bash
 logs/eval_log.jsonl
 ```
+---
 
 ## 🧰 Developer Notes
 
 - Code is modular and testable.
 - Debug logs can be toggled via `debug_log()` in `utils/debug.py` (Work in progress).
 - Token limit enforced using `trim_messages()` in `utils/token_utils.py`.
+
+---
 
 ## 🧭 Roadmap
 
@@ -109,11 +80,17 @@ logs/eval_log.jsonl
 - [ ] GUI layer using Streamlit/Gradio
 - [ ] Plug into agent framework (e.g., LangGraph)
 
+---
+
 ## 🤝 Contributing
 Feel free to fork or create issues! This project is a stepping stone toward building your own agentic apps and LLM tools.
 
+---
+
 ## 📄 License
 MIT
+
+---
 
 ## 🙋‍♂️ Maintainer
 This project is currently maintained by the following individuals:
