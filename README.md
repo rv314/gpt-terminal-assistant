@@ -72,13 +72,13 @@ logs/eval_log.jsonl
 
 ## 🧭 Roadmap
 
-- [x] Terminal-based assistant with memory
-- [x] Modular ChatEngine class
-- [x] Token limiter + debug tools
-- [x] CI/CD pipeline with uv
-- [ ] Add journaling / reminder commands
-- [ ] GUI layer using Streamlit/Gradio
-- [ ] Plug into agent framework (e.g., LangGraph)
+- [x] Terminal-based assistant with memory (ChromaDB)
+- [x] Modular chat engine structure (`chat_client.py`)
+- [x] Token limiter using `tiktoken`
+- [x] Debug tools with toggle config
+- [x] GitHub Actions CI/CD pipeline with `uv`
+- [ ] Journaling/reminder commands (optional add-on)
+- [ ] Convert CLI into GUI (Streamlit/Gradio) — future enhancement
 
 ---
 
