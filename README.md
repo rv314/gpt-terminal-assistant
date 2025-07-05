@@ -6,7 +6,7 @@ A terminal-based AI assistant powered by OpenAI's GPT models. It supports contex
 
 ## 🛠️ Installation
 
-➡️ For full setup and advanced usage, see the [📄 Full Installation Guide.]()
+➡️ For full setup and advanced usage, see the 📄[Full Installation Guide.](https://github.com/rv314/gpt-terminal-assistant/blob/main/INSTALLATION.md)
 
 ## 📌 Features
 
