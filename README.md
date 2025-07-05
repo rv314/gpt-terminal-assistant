@@ -35,7 +35,7 @@ A terminal-based AI assistant powered by OpenAI's GPT models. It supports contex
 
 1. **Clone the repo**
 ```bash
-git clone https://github.com/vrp-314/gpt-terminal-assistant.git
+git clone https://github.com/rv314/gpt-terminal-assistant.git
 cd gpt-terminal-assistant
 ```
 
