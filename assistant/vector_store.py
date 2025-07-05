@@ -24,17 +24,25 @@ class VectorStore:
   def add_message(self, question: str, answer: str):
     """Embed and store Q&A pair into Chroma vector DB."""
     # content = f"Q: {question.strip()}\nA: {answer.strip()}"
-    content = str([{"Q": question.strip(), "A": answer.strip()}])
-    embeddings = self.embedder.embed_query(content)
+    entry = f"Q: {question}\nA: {answer}"
+    entry_id = f"user_{hash(entry)}"
+
+    # Check for existing id to prevent duplicates
+    existing = self.collection.get(["documents"])
+    existing_ids = existing.get("ids", [])
+    if entry_id in existing_ids:
+      return
+    
+    embeddings = self.embedder.embed_query(entry)
     self.collection.add(
-      documents=[content],
+      documents=[entry],
       embeddings=[embeddings],
-      ids=[f"entry_{hash(content)}"]
+      ids=[entry_id]
     )
     # print(f"🧠 Added to vector store:\n{content[:100]}...\n")
 
 
-  def get_top_k(self, query: str, k: int = 1, similarity_threshold: float = 0.5) -> list[tuple[str, float]]:
+  def get_top_k(self, query: str, k: int = 3, similarity_threshold: float = 0.3) -> list[tuple[str, float]]:
     """Retrieve top-k similar Q&A messages from vector DB."""
     embeddings = self.embedder.embed_query(query)
 
