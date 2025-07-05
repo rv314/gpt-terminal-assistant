@@ -39,12 +39,26 @@ git clone https://github.com/vrp-314/gpt-terminal-assistant.git
 cd gpt-terminal-assistant
 ```
 
-2. **Install dependencies with uv**
+2. **Create a virtual environment (uv-based)**
+```bash
+uv venv .venv
+```
+
+3. **Activate virtual environment**
+```bash
+# Linux/Mac
+source .venv/bin/activate
+
+# Windows (Powershell)
+.venv\Scripts\Activate.ps1
+```
+
+4. **Install dependencies with uv from pyproject.toml**
 ```bash
 uv sync
 ```
 
-3. **Create `.env` file**
+5. **Create `.env` file**
 
 ```env
 # .env
