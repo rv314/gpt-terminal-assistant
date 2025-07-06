@@ -28,7 +28,7 @@ class VectorStore:
     entry_id = f"user_{hash(entry)}"
 
     # Check for existing id to prevent duplicates
-    existing = self.collection.get(["documents"])
+    existing = self.collection.get(include=["documents"])
     existing_ids = existing.get("ids", [])
     if entry_id in existing_ids:
       return
