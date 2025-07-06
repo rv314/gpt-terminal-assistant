@@ -1,5 +1,5 @@
-# TODO: uuid not working as an argument, might as well leave it 
-#       to the library to perform the function of adding uuid
+# TODO: Check vector DB storage, reduce duplicates
+
 from datetime import datetime
 from langchain_openai import OpenAIEmbeddings
 from langchain.schema import Document
@@ -23,17 +23,26 @@ class VectorStore:
   
   def add_message(self, question: str, answer: str):
     """Embed and store Q&A pair into Chroma vector DB."""
-    content = f"Q: {question.strip()}\nA: {answer.strip()}"
-    embeddings = self.embedder.embed_query(content)
+    # content = f"Q: {question.strip()}\nA: {answer.strip()}"
+    entry = f"Q: {question}\nA: {answer}"
+    entry_id = f"user_{hash(entry)}"
+
+    # Check for existing id to prevent duplicates
+    existing = self.collection.get(include=["documents"])
+    existing_ids = existing.get("ids", [])
+    if entry_id in existing_ids:
+      return
+    
+    embeddings = self.embedder.embed_query(entry)
     self.collection.add(
-      documents=[content],
+      documents=[entry],
       embeddings=[embeddings],
-      ids=[f"entry_{hash(content)}"]
+      ids=[entry_id]
     )
-    print(f"🧠 Added to vector store:\n{content[:100]}...\n")
+    # print(f"🧠 Added to vector store:\n{content[:100]}...\n")
 
 
-  def get_top_k(self, query: str, k: int = 3, similarity_threshold: float = 0.5) -> list[tuple[str, float]]:
+  def get_top_k(self, query: str, k: int = 3, similarity_threshold: float = 0.3) -> list[tuple[str, float]]:
     """Retrieve top-k similar Q&A messages from vector DB."""
     embeddings = self.embedder.embed_query(query)
 
@@ -45,6 +54,7 @@ class VectorStore:
     
     documents = results.get("documents", [[]])[0]
     distances = results.get("distances", [[]])[0]
+    print(f"Docs from vector: {documents}")
 
     # Filter based on distances threshold (lower = more similar)
     filtered = [
@@ -53,10 +63,10 @@ class VectorStore:
       if dist <= similarity_threshold
     ]
 
-    print("→ Query:", query)
-    print("→ Raw embedding len:", len(embeddings))
-    print("→ Collection count:", self.collection.count())
-    print("→ Query results:", results)
+    # print("→ Query:", query)
+    # print("→ Raw embedding len:", len(embeddings))
+    # print("→ Collection count:", self.collection.count())
+    # print("→ Query results:", results)
 
     return filtered
 

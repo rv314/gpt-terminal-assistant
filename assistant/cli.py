@@ -1,40 +1,54 @@
 # assistant/cli.py - main entry
 
-from assistant.chat_client import chat
-from assistant.vector_store import VectorStore
+from assistant.chat_client import ChatEngine
 from utils.evaluation_logger import log_eval
+import os
+from dotenv import load_dotenv
+from utils.debug import str_to_bool
 
-vector_store = VectorStore()
+load_dotenv()
+debug = str_to_bool(os.getenv("DEBUG", "false"))
 
-def main(debug: bool):
+def select_model():
+    models = ["gpt-3.5-turbo", "gpt-4"]
+    
+    print("\n💡 Available Models:")
+    for i, m in enumerate(models, 1):
+        print(f"  {i}. {m}")
+    
+    while True:
+        try:
+            choice = int(input("\n🔢 Enter model number (default: 1): ") or 1)
+            if 1 <= choice <= len(models):
+                return models[choice - 1]
+            else:
+                print(f"❌ Invalid choice. Please select a number between 1 and {len(models)}.")
+        except ValueError:
+            print("⚠️ Please enter a valid number.")
+
+def main():
 
   print("🧠 GPT Terminal Assistant — Type 'exit' to quit")  
+
+  # Let user choose a model
+  selected_model = select_model()
+  print(f"\n Using model: {selected_model}")
+  print(f"In CLI Debug is set to: {debug}")
+  chat_engine = ChatEngine(model=selected_model, debug=debug)
+
+  messages = []
 
   while True:
     user_input = input("👤 You: ")
     if user_input.lower() in ["quit", "exit"]:
       break
 
-    context_results = vector_store.get_top_k(user_input, k=3)
-    context_docs = [doc for doc, score in context_results]
-
     # Only user input is passed, system/context is handled in chat_client
-    messages = [
-      {"role": "user", "content": user_input}
-    ]
-
-    if debug:
-      print(f"\n🛠️ Retrieved {len(context_docs)} context message(s):")
-      for idx, (doc, score) in enumerate(context_results, 1):
-        print(f"  [{idx}] (score: {score:.4f}) {doc}")
-        print(f"Total vector store count: {vector_store.collection.count()}")
-
-    reply = chat(messages)
+    messages.append({"role": "user", "content": user_input})
+    reply = chat_engine.chat(messages)
+    messages.append({"role": "assistant", "content": reply})
     print(f"🤖 GPT: {reply}")
 
-    # Log for RAG evaluation
-    log_eval(query=user_input, context_results=context_results, response=reply)
-
 if __name__ == '__main__':
-  main(debug=False)
+  main()
   

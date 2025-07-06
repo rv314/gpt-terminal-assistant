@@ -3,7 +3,7 @@ import openai
 from dotenv import load_dotenv
 from assistant.vector_store import VectorStore
 from uuid import uuid4
-from assistant.token_utils import trim_messages
+from utils.token_limits import trim_messages
 
 load_dotenv()
 store = VectorStore()
@@ -49,6 +49,6 @@ while True:
     print(f'Assistant: {reply}\n')
     messages.append({"role": "assistant", "content": reply})
     store.add_message(reply, "assistant") # store embedding
-    
+
   except Exception as e:
     print(f"[Error] {e}")
