@@ -3,7 +3,7 @@ import openai
 from dotenv import load_dotenv
 from assistant.vector_store import VectorStore
 from uuid import uuid4
-from utils.token_utils import trim_messages
+from utils.token_limits import trim_messages
 
 load_dotenv()
 store = VectorStore()

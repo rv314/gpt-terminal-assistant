@@ -2,7 +2,7 @@
 import openai
 import os
 from dotenv import load_dotenv
-from utils.token_utils import trim_messages
+from utils.token_limits import trim_messages
 from assistant.vector_store import VectorStore
 from typing import List, Dict
 from utils.debug import debug_log, print_eval_log, print_vector_results
