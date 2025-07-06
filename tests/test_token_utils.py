@@ -1,4 +1,4 @@
-from utils.token_utils import count_tokens, trim_messages
+from utils.token_limits import count_tokens, trim_messages
 import pytest
 import os
 
