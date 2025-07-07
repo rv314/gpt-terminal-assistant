@@ -41,7 +41,7 @@ uv run pytest
 ## 💬 Usage
 ### 🖥️ Start the assistant
 ```bash
-uv run python assistant/cli.py
+uv run gpt-assistant
 ```
 #### OR
 ```bash
