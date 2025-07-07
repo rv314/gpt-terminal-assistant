@@ -33,7 +33,7 @@ def main():
   # Let user choose a model
   selected_model = select_model()
   print(f"\n Using model: {selected_model}")
-  print(f"In CLI Debug is set to: {debug}")
+  #print(f"In CLI Debug is set to: {debug}")
   chat_engine = ChatEngine(model=selected_model, debug=debug)
 
   messages = []
@@ -41,6 +41,7 @@ def main():
   while True:
     user_input = input("You: ")
     if user_input.lower() in ["quit", "exit"]:
+      print("Goodbye!!")
       break
 
     # Only user input is passed, system/context is handled in chat_client

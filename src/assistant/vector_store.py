@@ -8,6 +8,8 @@ from chromadb.config import Settings
 import os
 from pathlib import Path
 
+os.environ["CHROMA_TELEMETRY_ENABLED"] = "false"
+
 class VectorStore:
   
   def __init__(self, collection_name="chat_memory", persist_dir="vectors/chroma"):
@@ -54,7 +56,7 @@ class VectorStore:
     
     documents = results.get("documents", [[]])[0]
     distances = results.get("distances", [[]])[0]
-    print(f"Docs from vector: {documents}")
+    # print(f"Docs from vector: {documents}")
 
     # Filter based on distances threshold (lower = more similar)
     filtered = [
