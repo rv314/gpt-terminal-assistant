@@ -12,23 +12,23 @@ debug = str_to_bool(os.getenv("DEBUG", "false"))
 def select_model():
     models = ["gpt-3.5-turbo", "gpt-4"]
     
-    print("\n💡 Available Models:")
+    print("\nAvailable Models:")
     for i, m in enumerate(models, 1):
         print(f"  {i}. {m}")
     
     while True:
         try:
-            choice = int(input("\n🔢 Enter model number (default: 1): ") or 1)
+            choice = int(input("\nEnter model number (default: 1): ") or 1)
             if 1 <= choice <= len(models):
                 return models[choice - 1]
             else:
-                print(f"❌ Invalid choice. Please select a number between 1 and {len(models)}.")
+                print(f"Invalid choice. Please select a number between 1 and {len(models)}.")
         except ValueError:
             print("⚠️ Please enter a valid number.")
 
 def main():
 
-  print("🧠 GPT Terminal Assistant — Type 'exit' to quit")  
+  print("GPT Terminal Assistant — Type 'exit' to quit")  
 
   # Let user choose a model
   selected_model = select_model()
@@ -39,7 +39,7 @@ def main():
   messages = []
 
   while True:
-    user_input = input("👤 You: ")
+    user_input = input("You: ")
     if user_input.lower() in ["quit", "exit"]:
       break
 
@@ -47,7 +47,7 @@ def main():
     messages.append({"role": "user", "content": user_input})
     reply = chat_engine.chat(messages)
     messages.append({"role": "assistant", "content": reply})
-    print(f"🤖 GPT: {reply}")
+    print(f"GPT: {reply}")
 
 if __name__ == '__main__':
   main()
