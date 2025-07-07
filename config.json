@@ -1,0 +1,18 @@
+{
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-3.5-turbo",
+    "max_tokens": 3000
+  },
+  "embedding": {
+    "provider": "openai"
+  },
+  "vector_store": {
+    "provider": "chroma",
+    "persist_directory": "vectors/chroma"
+  },
+  "logging": {
+    "debug": true,
+    "log_dir": "logs"
+  }
+}
