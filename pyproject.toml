@@ -16,3 +16,23 @@ dependencies = [
     "torch>=2.2.2",
     "uuid>=1.30",
 ]
+
+[pytest]
+pythonpath = "src"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["assistant", "utils", "vectors"]
+
+[project.scripts]
+gpt-assistant = "assistant.cli:main"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
