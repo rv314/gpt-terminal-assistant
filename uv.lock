@@ -505,6 +505,7 @@ dependencies = [
     { name = "langchain-core" },
     { name = "langchain-openai" },
     { name = "openai" },
+    { name = "posthog" },
     { name = "pytest" },
     { name = "python-dotenv" },
     { name = "tiktoken" },
@@ -519,6 +520,7 @@ requires-dist = [
     { name = "langchain-core", specifier = ">=0.3.67" },
     { name = "langchain-openai", specifier = ">=0.3.27" },
     { name = "openai", specifier = ">=1.91.0" },
+    { name = "posthog", specifier = "<6.0.0" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
     { name = "tiktoken", specifier = ">=0.9.0" },
@@ -1524,7 +1526,7 @@ wheels = [
 
 [[package]]
 name = "posthog"
-version = "6.0.0"
+version = "5.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "backoff" },
@@ -1532,11 +1534,10 @@ dependencies = [
     { name = "python-dateutil" },
     { name = "requests" },
     { name = "six" },
-    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/c3/c83883af8cc5e3b45d1bee85edce546a4db369fb8dc8eb6339fad764178b/posthog-6.0.0.tar.gz", hash = "sha256:b7bfa0da03bd9240891885d3e44b747e62192ac9ee6da280f45320f4ad3479e0", size = 88066 }
+sdist = { url = "https://files.pythonhosted.org/packages/48/20/60ae67bb9d82f00427946218d49e2e7e80fb41c15dc5019482289ec9ce8d/posthog-5.4.0.tar.gz", hash = "sha256:701669261b8d07cdde0276e5bc096b87f9e200e3b9589c5ebff14df658c5893c", size = 88076 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/ec/7a44533c9fe7046ffcfe48ca0e7472ada2633854f474be633f4afed7b044/posthog-6.0.0-py3-none-any.whl", hash = "sha256:01f5d11046a6267d4384f552e819f0f4a7dc885eb19f606c36d44d662df9ff89", size = 104945 },
+    { url = "https://files.pythonhosted.org/packages/4f/98/e480cab9a08d1c09b1c59a93dade92c1bb7544826684ff2acbfd10fcfbd4/posthog-5.4.0-py3-none-any.whl", hash = "sha256:284dfa302f64353484420b52d4ad81ff5c2c2d1d607c4e2db602ac72761831bd", size = 105364 },
 ]
 
 [[package]]
