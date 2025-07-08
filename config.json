@@ -2,7 +2,7 @@
   "llm": {
     "provider": "openai",
     "model": "gpt-3.5-turbo",
-    "max_tokens": 3000
+    "available_models": ["gpt-3.5-turbo", "gpt-4"]
   },
   "embedding": {
     "provider": "openai"
@@ -12,7 +12,8 @@
     "persist_directory": "vectors/chroma"
   },
   "logging": {
-    "debug": true,
+    "debug": false,
     "log_dir": "logs"
-  }
+  },
+  "max_tokens": 3000
 }
