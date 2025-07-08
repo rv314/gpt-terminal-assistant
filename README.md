@@ -1,12 +1,21 @@
-# 🧠 GPT Terminal Assistant
+# GPT Terminal Assistant
 
-A terminal-based AI assistant powered by OpenAI's GPT models. It supports context-aware conversations using a vector database (ChromaDB), token limiting with `tiktoken`, evaluation logging, and modular design for future expansion.
+A terminal-based AI assistant powered by modular LLM, embedding & vector store backends using registry patterns and configuration. Current stack:
+
+- **LLM**: OpenAI GPT‑3.5‑turbo / GPT‑4 (configurable via `config.json`)
+- **Embeddings**: OpenAI (via registry)
+- **Vector DB**: ChromaDB (persisted, also pluggable via registry)
+- **Prompting**: YAML-based prompt templates (RAG-style context injection)
+- **Logging**: JSONL eval logs + debug logging (configurable directory)
+- **CLI**: terminal interface with interactive model selection
+- **Tests & CI**: `pytest`, GitHub Actions + `uv` (PEP 582), coverage masks for missing OpenAI key
 
 ---
+## 📥 Installation
 
-## 🛠️ Installation, Usage and Tests
+Please refer to **[INSTALLATION.md](./INSTALLATION.md)** for full setup, including environment variable config and dependencies.
 
-➡️ For full setup, usage and tests, see the 📄[Full Installation Guide.](https://github.com/rv314/gpt-terminal-assistant/blob/main/INSTALLATION.md)
+---
 
 ## 📌 Highlights and Features
 
@@ -22,19 +31,43 @@ This assistant implements a **Retrieval-Augmented Generation (RAG)** pipeline us
 
 ---
 
-### 🧪 Test-Driven & CI-Ready
+## ⚙️ Configuration-driven architecture
 
-- ✅ Coverage for critical components using **`pytest`**
-- 🔁 Automated testing via **GitHub Actions**
-- 🔒 Uses **GitHub Secrets** or local skipping for `OPENAI_API_KEY`
+Located at `config.json`, controlling:
 
+```json
+{
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-3.5-turbo",
+    "available_models": ["gpt-3.5-turbo", "gpt-4"]
+  },
+  "embedding": {
+    "provider": "openai"
+  },
+  "vector_store": {
+    "provider": "chroma",
+    "persist_directory": "vectors/chroma"
+  },
+  "logging": {
+    "debug": true,
+    "log_dir": "logs"
+  },
+  "max_tokens": 3000
+}
+```
 ---
 
-### 🧰 Modular, Extensible Codebase
+#### Seamlessly Add/change providers like qdrant, sentence_transformer, or new LLM backends centrally. No code changes needed.
 
-- 🧱 Organized by purpose: `chat_client.py`, `vector_store.py`, `token_utils.py`, `evaluation_logger.py`, etc.
-- 🧪 Optional debug logger and evaluation scoring logic for observability
-- 🧠 Smart token-aware message trimming with `tiktoken`
+## 💡 Features
+
+- Registry Pattern: Plug-and-play support for embeddings, vector stores, and LLMs.
+- Prompt Decoupling: Templates in `src/llm/prompt.yaml` using `{{context}}` placeholder.
+- Context-aware RAG Prompting
+- Logging: Eval logs stored in `logs/eval_log.jsonl`; debug logs in `logs/debug.log`.
+- Token Limits
+- Automated Tests & CI
 
 ---
 
@@ -52,33 +85,41 @@ This assistant implements a **Retrieval-Augmented Generation (RAG)** pipeline us
 
 ---
 
-## 🧠 Vector Store
+## 🛣️ Roadmap
 
-Messages are stored and retrieved using ChromaDB. Retrieval is based on semantic similarity using OpenAI embeddings.
+#### Completed
+- [x] Registry support for VectorStore and Embeddings
+- [x] Modular LLM registry with OpenAI backend
+- [x] YAML-based prompt templates
+- [x] Context retrieval + prompt injection
+- [x] Logging & debug via config
+- [x] CLI model selection
+- [x] Test coverage and CI pipeline
 
-You can view logs and evals inside:
-```bash
-logs/eval_log.jsonl
-```
+#### Planned
+- [ ] Add support for additional vector stores (e.g., FAISS, Qdrant)
+- [ ] Add additional embedding models (e.g., SentenceTransformer, Instructor)
+- [ ] Add more LLM backends (e.g., LLaMA, HuggingFace)
+- [ ] Multi-prompt profiles (e.g., dev-assistant.yaml, science-assistant.yaml)
+- [ ] Refactor CLI using argparse or similar
+
 ---
 
-## 🧰 Developer Notes
+## 🧠 Developer Notes
+- Registry folders:
+  - `src/registries/embedding_registry.py`
+  - `src/registries/vector_registry.py`
+  - `src/registries/llm_registry.py`
 
-- Code is modular and testable.
-- Debug logs can be toggled via `debug_log()` in `utils/debug.py` (Work in progress).
-- Token limit enforced using `trim_messages()` in `utils/token_utils.py`.
+- Backends:
+  - `src/vector_backends/chroma_store.py`
+  - `src/embeddings/openai_embedder.py`
+  - `src/llm/openai_llm.py`
 
----
+- Prompt files:
+  - `src/llm/prompt.yaml`
 
-## 🧭 Roadmap
-
-- [x] Terminal-based assistant with memory (ChromaDB)
-- [x] Modular chat engine structure (`chat_client.py`)
-- [x] Token limiter using `tiktoken`
-- [x] Debug tools with toggle config
-- [x] GitHub Actions CI/CD pipeline with `uv`
-- [ ] Journaling/reminder commands (optional add-on)
-- [ ] Convert CLI into GUI (Streamlit/Gradio) — future enhancement
+- Utilities for token management and debug functionality all respect `config.json`
 
 ---
 
@@ -87,7 +128,7 @@ Feel free to fork or create issues! This project is a stepping stone toward buil
 
 ---
 
-## 📄 License
+## 📜 License
 MIT
 
 ---

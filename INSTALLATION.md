@@ -48,5 +48,9 @@ uv run gpt-assistant
 python -m assistant.cli
 ```
 
-- Type your queries in terminal.
-- Type exit to quit.
+Then follow the interactive CLI:
+
+- Select model (if multiple configured)
+- Enter your prompt
+- Context-aware response generated, token-limited, logged
+- Cycle continues until you type exit
