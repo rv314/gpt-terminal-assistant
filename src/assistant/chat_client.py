@@ -1,36 +1,41 @@
 # assistant/chat_client.py
-import openai
-import os
-from dotenv import load_dotenv
 from utils.token_limits import trim_messages
-from assistant.vector_store import VectorStore
 from typing import List, Dict
 from utils.debug import debug_log, print_eval_log, print_vector_results
 from utils.evaluation_logger import log_eval
 
+from registries.vector_registry import get_vector_db
+from registries.embedding_registry import get_embedder
+from registries.llm_registry import get_llm
+from utils.prompt_loader import load_prompt_template
 
-load_dotenv()
+from llm.openai_llm import OpenAIChatModel
+from vector_backends.chroma_store import ChromaVectorStore
+from embedding_models.openai_embedder import OpenAIEmbedder
 
 
 class ChatEngine:
-  def __init__(self, model: str = "gpt-3.5-turbo", max_tokens: int = 3000, debug: bool = False):
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-    self.model = model
-    self.max_tokens = max_tokens
-    self.vector_store = VectorStore()
-    self.debug = debug
+  # TODO: decouple LLM API from ChatEngine
+  def __init__(self, config: dict):
+    self.model = config["llm"]["model"]
+    self.max_tokens = config.get("max_tokens", 3000)
+    self.debug = config.get("logging", {}).get("debug", False)
 
-    # Automaticall detect provider based on model
-    if model.startswith("gpt-"):
-      self.provider = "openai"
-    else:
-      raise ValueError(f"Unsupported model: {model}")
+    # Register LLM via registry
+    self.llm = get_llm(config["llm"]["provider"], config=config["llm"])
+
+    # Register embedder and vector store
+    embedder = get_embedder(config["embedding"]["provider"])
+    vector_store = get_vector_db(config["vector_store"]["provider"], embedder=embedder)
+    self.vector_store = vector_store
   
+
   def get_context(self, query: str, k: int = 3):
-    """Retrieve top-k similar Q&A from vectore store to dynamically use as context in system prompt."""
+    """Retrieve top-k similar Q&A from vector store to dynamically use as context in system prompt."""
     context_results = self.vector_store.get_top_k(query, k)
     context_text = "\n---\n".join([doc for doc, _ in context_results]) if context_results else ""
     return context_text, context_results
+  
   
   def chat(self, messages: List[Dict[str, str]]) -> str:
     """Dynamically builds prompt using context, calls model API -> sends prompt and returns response"""
@@ -40,10 +45,9 @@ class ChatEngine:
     context_text, context_results = self.get_context(user_input)
 
     # Step 2. Build system prompt with context if available
-    system_prompt = {"role": "system",
-      "content": "You are a helpful terminal assistant. You provide short, brief and crisp responses."
-      + (f"\nUse the following previous Q&A for context:\n{context_text}" if context_text else "")
-      }
+    template = load_prompt_template()
+    prompt_content = template.replace("{{context}}", context_text if context_text else "")
+    system_prompt = {"role": "system", "content": prompt_content}
     
     # Step 3. Trim and finalize message history
     full_prompt = [system_prompt] + messages[-2:] # Only last 2 user/assistant messages
@@ -53,7 +57,8 @@ class ChatEngine:
     if self.debug:
       import json
       print("\n📌 Prompt sent to OpenAI:")
-      print(json.dumps(full_prompt, indent=2)[:1500] + "..." if len(json.dumps(full_prompt)) > 1500 else json.dumps(full_prompt, indent=2))
+      dumped_json = json.dumps(full_prompt, indent=2)
+      print(dumped_json[:1500] + "..." if len(json.dumps(full_prompt)) > 1500 else dumped_json)
       print("\n📌 Context used:", "Yes" if context_text else "No")
       print_vector_results(context_results)
       debug_log(f"User input: {user_input}")
@@ -63,7 +68,7 @@ class ChatEngine:
 
     # Step 5. Get response from model
     try:
-      reply = self._call_model(full_prompt)
+      reply = self.llm.chat(full_prompt)
     except Exception as e:
       reply = "An error occured while generating response, Check logs."
       debug_log(f"Model API error: {e}")
@@ -78,13 +83,3 @@ class ChatEngine:
     self.vector_store.add_message(user_input, reply)
 
     return reply
-  
-  def _call_model(self, prompt: List[Dict[str, str]]) -> str:
-    if self.provider == "openai":
-      response = openai.chat.completions.create(
-        model=self.model,
-        messages=prompt
-        )
-      return response.choices[0].message.content
-
-    raise NotImplementedError(f"Provider '{self.provider}' not yet implemented.")
