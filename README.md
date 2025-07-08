@@ -1,4 +1,4 @@
-# GPT Terminal Assistant
+# 🤖 GPT Terminal Assistant
 
 A terminal-based AI assistant powered by modular LLM, embedding & vector store backends using registry patterns and configuration. Current stack:
 
@@ -58,7 +58,7 @@ Located at `config.json`, controlling:
 ```
 ---
 
-#### Seamlessly Add/change providers like qdrant, sentence_transformer, or new LLM backends centrally. No code changes needed.
+##### Seamlessly add/change providers like `qdrant`, `sentence_transformer`, or new LLM backends centrally. No code changes needed.
 
 ## 💡 Features
 
