@@ -1,40 +1,38 @@
 # assistant/cli.py - main entry
 
-from assistant.chat_client import ChatEngine
-from utils.evaluation_logger import log_eval
 import os
 from dotenv import load_dotenv
+from assistant.chat_client import ChatEngine
 from utils.debug import str_to_bool
+from utils.config import load_config
 
 load_dotenv()
-debug = str_to_bool(os.getenv("DEBUG", "false"))
-
-def select_model():
-    models = ["gpt-3.5-turbo", "gpt-4"]
-    
-    print("\nAvailable Models:")
-    for i, m in enumerate(models, 1):
-        print(f"  {i}. {m}")
-    
-    while True:
-        try:
-            choice = int(input("\nEnter model number (default: 1): ") or 1)
-            if 1 <= choice <= len(models):
-                return models[choice - 1]
-            else:
-                print(f"Invalid choice. Please select a number between 1 and {len(models)}.")
-        except ValueError:
-            print("⚠️ Please enter a valid number.")
 
 def main():
 
-  print("GPT Terminal Assistant — Type 'exit' to quit")  
+  print("GPT Terminal Assistant — Type 'exit' to quit")
+
+  # Load full config
+  config = load_config()
 
   # Let user choose a model
-  selected_model = select_model()
-  print(f"\n Using model: {selected_model}")
+  models = config["llm"].get("available_models", [])
+
+  if models:
+    print("Available Models:")
+    for i, m in enumerate(models, 1):
+      print(f"    {i}.  {m}")
+    try:
+      choice = int(input(f"\nSelect model [1-{len(models)}] (default: 1) ") or 1)
+      selected_model = models[choice - 1]
+      config["llm"]["model"] = selected_model
+    except (ValueError, IndexError):
+      print("Invalid choice. Using default.")
+
   #print(f"In CLI Debug is set to: {debug}")
-  chat_engine = ChatEngine(model=selected_model, debug=debug)
+
+  # Initialize ChatEngine with full config
+  chat_engine = ChatEngine(config=config)
 
   messages = []
 
