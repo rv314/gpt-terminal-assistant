@@ -197,3 +197,4 @@ vectors/
 vectorlite_data.bin
 .vscode/
 logs/eval_log_bk*
+misc*
